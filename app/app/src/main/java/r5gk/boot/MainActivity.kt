@@ -10,6 +10,7 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -227,14 +228,14 @@ class MainActivity : ComponentActivity() {
             packageManager.getPackageArchiveInfo(
                 File(shellBin, "manager.apk").absolutePath,
                 0,
-            )?.versionCode
+            )?.let(PackageInfoCompat::getLongVersionCode)
         } catch (t: Throwable) {
             null
         } ?: return true
         val installed = try {
-            packageManager.getPackageInfo(MANAGER, 0).versionCode
+            PackageInfoCompat.getLongVersionCode(packageManager.getPackageInfo(MANAGER, 0))
         } catch (t: Throwable) {
-            0
+            0L
         }
         return installed < bundled
     }
